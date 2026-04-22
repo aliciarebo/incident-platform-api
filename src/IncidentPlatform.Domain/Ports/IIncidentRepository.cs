@@ -10,5 +10,6 @@ namespace IncidentPlatform.Domain.Ports
     public interface IIncidentRepository
     {
         Task AddAsync(Incident incident, CancellationToken ct = default);
+        Task<IEnumerable<Incident>> GetAllAsync();
     }
 }

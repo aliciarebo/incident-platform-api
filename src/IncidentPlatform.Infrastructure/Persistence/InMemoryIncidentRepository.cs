@@ -23,5 +23,10 @@ namespace IncidentPlatform.Infrastructure.Persistence
             var incident = _incidents.FirstOrDefault(i => i.Id == id);
             return Task.FromResult(incident);
         }
+
+        public Task<IEnumerable<Incident>> GetAllAsync()
+        {
+            return Task.FromResult(_incidents.AsEnumerable());
+        }
     }
 }
