@@ -1,4 +1,5 @@
 ﻿using IncidentPlatform.Application.Incidents.CreateIncident;
+using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,13 @@ namespace IncidentPlatform.API.Controllers
     {
         private readonly CreateIncidentHandler _createHandler;
         private readonly GetIncidentsHandler _getHandler;
+        private readonly GetIncidentByIdHandler _getByIdHandler;
 
-        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler)
+        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
+            _getByIdHandler = getHandlerById;
         }
 
         [HttpPost]
@@ -33,6 +36,17 @@ namespace IncidentPlatform.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _getHandler.HandleAsync(new GetIncidentsQuery());
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _getByIdHandler.HandleAsync(new GetIncidentByIdQuery(id));
+
+            if (result is null)
+                return NotFound();
+
             return Ok(result);
         }
     }

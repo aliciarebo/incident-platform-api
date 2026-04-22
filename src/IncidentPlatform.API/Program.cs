@@ -1,5 +1,6 @@
 using IncidentPlatform.Application.Auth;
 using IncidentPlatform.Application.Incidents.CreateIncident;
+using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
 using IncidentPlatform.Domain.Ports;
 using IncidentPlatform.Infrastructure.Auth;
@@ -18,6 +19,7 @@ builder.Services.AddSingleton<IIncidentRepository, InMemoryIncidentRepository>()
 builder.Services.AddScoped<CreateIncidentHandler>();
 builder.Services.AddScoped<ICurrentUser, FakeCurrentUser>();
 builder.Services.AddScoped<GetIncidentsHandler>();
+builder.Services.AddScoped<GetIncidentByIdHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
