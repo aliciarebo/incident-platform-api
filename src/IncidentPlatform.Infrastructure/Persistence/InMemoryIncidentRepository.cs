@@ -1,5 +1,6 @@
-﻿using IncidentPlatform.Application.Incidents.Ports;
+﻿
 using IncidentPlatform.Domain.Incidents;
+using IncidentPlatform.Domain.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;

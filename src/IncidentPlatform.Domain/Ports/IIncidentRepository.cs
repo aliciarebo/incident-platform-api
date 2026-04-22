@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IncidentPlatform.Application.Incidents.Ports
+namespace IncidentPlatform.Domain.Ports
 {
     public interface IIncidentRepository
     {

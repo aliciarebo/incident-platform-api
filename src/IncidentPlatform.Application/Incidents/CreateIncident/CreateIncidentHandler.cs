@@ -1,6 +1,6 @@
 ﻿using IncidentPlatform.Application.Auth;
-using IncidentPlatform.Application.Incidents.Ports;
 using IncidentPlatform.Domain.Incidents;
+using IncidentPlatform.Domain.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +11,11 @@ namespace IncidentPlatform.Application.Incidents.CreateIncident
 {
     public sealed class CreateIncidentHandler
     {
-        private readonly IIncidentRepository _repo;
+        private readonly IIncidentRepository _incidentRepo;
         private readonly ICurrentUser _currentUser;
         public CreateIncidentHandler(IIncidentRepository repo, ICurrentUser currentUser)
         {
-            _repo = repo;
+            _incidentRepo = repo;
             _currentUser = currentUser;
         }
 
@@ -31,7 +31,7 @@ namespace IncidentPlatform.Application.Incidents.CreateIncident
                 reporterId: _currentUser.UserId
             );
 
-            await _repo.AddAsync(incident, ct);
+            await _incidentRepo.AddAsync(incident, ct);
 
             return new CreateIncidentResult(incident.Id);
         }
