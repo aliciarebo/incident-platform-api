@@ -98,6 +98,14 @@ Any other transition must be rejected.
 
 \- An incident can be unassigned initially.
 
+### Status change rules
+
+- Only Agent and Admin can change incident status
+- Reporter cannot change incident status
+- An Agent can only change the status of incidents assigned to them
+- An Admin can change the status of any incident
+- Status transitions must follow the workflow rules defined in the Incident aggregate
+
 ---
 
 \## Authorization \& Visibility (MVP)

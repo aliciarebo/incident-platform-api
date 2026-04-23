@@ -1,5 +1,6 @@
 ﻿using IncidentPlatform.API.Contracts.Incidents;
 using IncidentPlatform.Application.Incidents.AssignIncident;
+using IncidentPlatform.Application.Incidents.ChangeIncidentStatus;
 using IncidentPlatform.Application.Incidents.CreateIncident;
 using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
@@ -15,13 +16,15 @@ namespace IncidentPlatform.API.Controllers
         private readonly GetIncidentsHandler _getHandler;
         private readonly GetIncidentByIdHandler _getByIdHandler;
         private readonly AssignIncidentHandler _assignIncidentHandler;
+        private readonly ChangeIncidentStatusHandler _changeIncidentStatusHandler;
 
-        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler)
+        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler, ChangeIncidentStatusHandler changeIncidentStatusHandler)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
             _getByIdHandler = getHandlerById;
             _assignIncidentHandler = assignIncidentHandler;
+            _changeIncidentStatusHandler = changeIncidentStatusHandler;
         }
 
         [HttpPost]
@@ -59,6 +62,16 @@ namespace IncidentPlatform.API.Controllers
         {
             var command = new AssignIncidentCommand(id, request.AssignedToId);
             var result = await _assignIncidentHandler.HandleAsync(command);
+            return Ok(result);
+        }
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> ChangeStatus(Guid id, ChangeIncidentStatusRequest request)
+        {
+            var command = new ChangeIncidentStatusCommand(id, request.Status);
+
+            var result = await _changeIncidentStatusHandler.HandleAsync(command);
+
             return Ok(result);
         }
     }
