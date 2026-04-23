@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\IncidentPlatform.Domain\IncidentPlatform.Domain.csproj" />
-    <ProjectReference Include="..\src\IncidentPlatform.Application\IncidentPlatform.Application.csproj" />
+    <ProjectReference Include="..\..\src\IncidentPlatform.Domain\IncidentPlatform.Domain.csproj" />
+    <ProjectReference Include="..\..\src\IncidentPlatform.Application\IncidentPlatform.Application.csproj" />
   </ItemGroup>
 
 </Project>
