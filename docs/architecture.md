@@ -1,26 +1,16 @@
 \# Architecture — Incident Platform API
 
-
-
 \## Purpose
 
 This service provides a team-based Incident Management API for creating, viewing, assigning and updating incidents with clear workflow rules and role-based permissions.
 
-
-
 ---
-
-
 
 \## High-level Architecture
 
 The solution follows Clean Architecture to keep business rules independent from frameworks and infrastructure.
 
-
-
 Layers:
-
-
 
 \- \*\*Domain\*\*
 
@@ -28,23 +18,17 @@ Layers:
 
 &nbsp; - No dependencies on ASP.NET, EF Core or external services.
 
-
-
 \- \*\*Application\*\*
 
 &nbsp; - Use cases / orchestration (CreateIncident, GetTeamQueue, UpdateIncident, etc.).
 
 &nbsp; - Defines interfaces (ports) for persistence and external concerns (repositories, current user context).
 
-
-
 \- \*\*Infrastructure\*\*
 
 &nbsp; - Implementations for persistence and external concerns (EF Core repositories, database, auth/JWT, etc.).
 
 &nbsp; - Contains EF Core DbContext and migrations.
-
-
 
 \- \*\*API\*\*
 
@@ -54,17 +38,11 @@ Layers:
 
 &nbsp; - Auth middleware, request validation, and response formatting.
 
-
-
 Dependency direction:
 
 Domain ← Application ← Infrastructure ← API
 
-
-
 ---
-
-
 
 \## Domain Model (MVP)
 
@@ -78,13 +56,9 @@ Domain ← Application ← Infrastructure ← API
 
 &nbsp; - teamId (MVP: a user belongs to one team)
 
-
-
 \- \*\*Team\*\*
 
 &nbsp; - id, name
-
-
 
 \- \*\*Incident\*\*
 
@@ -92,7 +66,7 @@ Domain ← Application ← Infrastructure ← API
 
 &nbsp; - priority: Low | Medium | High
 
-&nbsp; - status: OPEN | IN\_PROGRESS | RESOLVED | CLOSED
+&nbsp; - status: OPEN | IN_PROGRESS | RESOLVED | CLOSED
 
 &nbsp; - teamId
 
@@ -104,11 +78,7 @@ Domain ← Application ← Infrastructure ← API
 
 &nbsp; - createdAt, updatedAt
 
-
-
 ---
-
-
 
 \## Workflow Rules (MVP)
 
@@ -116,33 +86,23 @@ Domain ← Application ← Infrastructure ← API
 
 Allowed transitions:
 
-\- OPEN → IN\_PROGRESS
+\- OPEN → IN_PROGRESS
 
-\- IN\_PROGRESS → RESOLVED
+\- IN_PROGRESS → RESOLVED
 
 \- RESOLVED → CLOSED
 
-
-
 Any other transition must be rejected.
-
-
 
 \### Assignment
 
 \- An incident can be unassigned initially.
 
-
-
 ---
-
-
 
 \## Authorization \& Visibility (MVP)
 
 The service uses JWT authentication. The token includes: userId (sub), role, teamId.
-
-
 
 \### Visibility rules
 
@@ -154,8 +114,6 @@ The service uses JWT authentication. The token includes: userId (sub), role, tea
 
 \- \*\*Admin\*\* can view all incidents.
 
-
-
 \### Update permissions (field-level)
 
 \- \*\*Non-admin users\*\* cannot set `assignedToId` or `teamId`.
@@ -164,11 +122,7 @@ The service uses JWT authentication. The token includes: userId (sub), role, tea
 
 \- \*\*Admin\*\* can update `assignedToId` and `teamId`.
 
-
-
 ---
-
-
 
 \## API Design
 
@@ -182,15 +136,9 @@ The API follows an "intent-based" design:
 
 &nbsp; - `GET /incidents/team` does not accept teamId query (prevents cross-team access)
 
-
-
 See `docs/api-contract.md` for endpoint details.
 
-
-
 ---
-
-
 
 \## Persistence (planned)
 
@@ -202,11 +150,7 @@ See `docs/api-contract.md` for endpoint details.
 
 \- Seed data for teams/users for local development
 
-
-
 ---
-
-
 
 \## Observability (planned)
 
@@ -214,11 +158,18 @@ See `docs/api-contract.md` for endpoint details.
 
 \- Health endpoint (`/health`) for readiness checks
 
-
-
 ---
 
+### Assignment rules
 
+- Only Agent and Admin can assign incidents
+- Reporter cannot assign incidents
+- An Agent can only assign incidents to themselves
+- An Agent can only assign incidents that belong to their own team
+- An Admin can assign an incident to any user within the incident team
+- Incidents in Resolved or Closed cannot be assigned
+- An already assigned incident cannot be reassigned, unless the actor is Admin and the incident is not in Resolved or Closed
+- Assigning an incident does not change the incident status
 
 \## Non-goals (MVP)
 
@@ -233,4 +184,3 @@ Out of scope for MVP, planned for later iterations:
 \- SLAs / escalation rules
 
 \- Advanced reassignment workflows
-
