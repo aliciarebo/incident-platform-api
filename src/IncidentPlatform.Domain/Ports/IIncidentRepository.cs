@@ -11,7 +11,7 @@ namespace IncidentPlatform.Domain.Ports
     {
         Task AddAsync(Incident incident, CancellationToken ct = default);
         Task<IEnumerable<Incident>> GetAllAsync();
-
         Task<Incident?> GetByIdAsync(Guid id);
+        Task UpdateAsync(Incident incident);
     }
 }
