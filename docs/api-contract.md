@@ -1,28 +1,18 @@
 \# API Contract — Incident Platform
 
-
-
 Base URL: `/api/v1`
 
-
-
 \## Auth
-
-
 
 \### POST /auth/login
 
 Purpose: Authenticate a user and return a JWT.
-
-
 
 Request
 
 \- email: string
 
 \- password: string
-
-
 
 Response
 
@@ -38,29 +28,19 @@ Response
 
 &nbsp; - teamId: string (guid)
 
-
-
 Notes
 
 \- MVP: simple credentials (seeded users)
 
 \- Token contains: sub(userId), role, teamId
 
-
-
 ---
 
-
-
 \## Incidents
-
-
 
 \### POST /incidents
 
 Purpose: Create a new incident.
-
-
 
 Request
 
@@ -74,10 +54,6 @@ Request
 
 \- category?: string
 
-
-
-
-
 Response (201)
 
 \- id: string (guid)
@@ -90,29 +66,21 @@ Response (201)
 
 \- updatedAt: string (ISO)
 
-
-
 \### GET /incidents/team
 
 Purpose: Team queue (incidents for my team, including unassigned).
-
-
 
 Notes
 
 \- teamId is derived from JWT (not passed as query)
 
-
-
 Query
 
-\- status?: OPEN | IN\_PROGRESS | RESOLVED | CLOSED
+\- status?: OPEN | IN_PROGRESS | RESOLVED | CLOSED
 
 \- priority?: Low | Medium | High
 
-\- assigned?: true | false   (optional)
-
-
+\- assigned?: true | false (optional)
 
 Response (200): array
 
@@ -132,17 +100,13 @@ Response (200): array
 
 \- updatedAt
 
-
-
 ---
 
 \### GET /incidents/my
 
 Purpose: Incidents assigned to the current user.
 
-
-
-Response (200): array 
+Response (200): array
 
 \- id
 
@@ -160,13 +124,9 @@ Response (200): array
 
 ---
 
-
-
 \### GET /incidents/{id}
 
 Purpose: Incident detail.
-
-
 
 Response (200)
 
@@ -192,15 +152,11 @@ Response (200)
 
 \- updatedAt
 
-
-
 ---
 
 \### PATCH /incidents/{id}
 
 Purpose: Edit incident fields in a single "Save" action from the UI.
-
-
 
 \- title?
 
@@ -215,8 +171,6 @@ Purpose: Edit incident fields in a single "Save" action from the UI.
 \- teamId? (Admin only)
 
 \- assignedToId?(Admin only)
-
-
 
 Response (200)
 
@@ -242,13 +196,45 @@ Response (200)
 
 \- updatedAt
 
+### PATCH /incidents/{id}/assign
 
+Purpose: Assign an incident to a user.
 
-Notes
+Request
+
+- assignedToId: string (guid)
+
+Rules
+
+- Agent and Admin can assign incidents
+- Reporter cannot assign incidents
+- An Agent can only assign incidents to themselves
+- An Agent can only assign incidents that belong to their own team
+- An Admin can assign the incident to any user within the incident team
+- Incidents in Resolved or Closed cannot be assigned
+- An already assigned incident cannot be reassigned, unless the actor is Admin and the incident is not in Resolved or Closed
+- Assigning an incident does not change its status
+
+Response (200)
+
+- id
+- title
+- description
+- teamId
+- category
+- priority
+- status
+- reporterId
+- assignedToId
+- createdAt
+- updatedAt
+
+Errors
+
+- 404 Not Found → incident does not exist
+- 403 Forbidden → user does not have permission to assign the incident
+- 409 Conflict → assignment violates business rules or conflicts with current incident state
+- 400 Bad Request → invalid request payload
+  Notes
 
 \- Non-admin users cannot set assignedToId or teamId (request should be rejected with 403).
-
-
-
-
-

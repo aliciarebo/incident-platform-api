@@ -1,4 +1,5 @@
 ﻿using IncidentPlatform.Application.Auth;
+using IncidentPlatform.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace IncidentPlatform.Infrastructure.Auth
     public class FakeCurrentUser : ICurrentUser
     {
         public Guid UserId => Guid.Parse("11111111-1111-1111-1111-111111111111");
-        public string Role => "Agent";
+        public UserRole Role => UserRole.Admin;
         public Guid TeamId => Guid.Parse("11111111-1111-1111-1111-111111111111");
     }
 }

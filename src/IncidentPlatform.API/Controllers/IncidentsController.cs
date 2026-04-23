@@ -1,4 +1,6 @@
-﻿using IncidentPlatform.Application.Incidents.CreateIncident;
+﻿using IncidentPlatform.API.Contracts.Incidents;
+using IncidentPlatform.Application.Incidents.AssignIncident;
+using IncidentPlatform.Application.Incidents.CreateIncident;
 using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
 using Microsoft.AspNetCore.Mvc;
@@ -12,12 +14,14 @@ namespace IncidentPlatform.API.Controllers
         private readonly CreateIncidentHandler _createHandler;
         private readonly GetIncidentsHandler _getHandler;
         private readonly GetIncidentByIdHandler _getByIdHandler;
+        private readonly AssignIncidentHandler _assignIncidentHandler;
 
-        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById)
+        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
             _getByIdHandler = getHandlerById;
+            _assignIncidentHandler = assignIncidentHandler;
         }
 
         [HttpPost]
@@ -47,6 +51,14 @@ namespace IncidentPlatform.API.Controllers
             if (result is null)
                 return NotFound();
 
+            return Ok(result);
+        }
+
+        [HttpPatch("{id}/assign")]
+        public async Task<IActionResult> Assign(Guid id, AssignIncidentRequest request)
+        {
+            var command = new AssignIncidentCommand(id, request.AssignedToId);
+            var result = await _assignIncidentHandler.HandleAsync(command);
             return Ok(result);
         }
     }

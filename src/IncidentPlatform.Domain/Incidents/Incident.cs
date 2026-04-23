@@ -41,8 +41,16 @@ namespace IncidentPlatform.Domain.Incidents
             UpdatedAt = CreatedAt;
         }
 
-        public void AssignTo(Guid userId)
+        public void AssignTo(Guid userId, bool isAdmin)
         {
+            if (userId == Guid.Empty)
+                throw new ArgumentException("UserId is required", nameof(userId));
+
+            if (Status == IncidentStatus.Resolved || Status == IncidentStatus.Closed)
+                throw new InvalidOperationException("Resolved or closed incidents cannot be assigned.");
+
+            if (AssignedToId.HasValue && !isAdmin)
+                throw new InvalidOperationException("Assigned incidents cannot be reassigned unless the actor is admin.");
             AssignedToId = userId;
             UpdatedAt = DateTimeOffset.UtcNow;
 

@@ -34,5 +34,10 @@ namespace IncidentPlatform.Infrastructure.Persistence
             var incident = _incidents.FirstOrDefault(i => i.Id == id);
             return Task.FromResult(incident);
         }
+
+        public Task UpdateAsync(Incident incident)
+        {
+            return Task.CompletedTask;
+        }
     }
 }
