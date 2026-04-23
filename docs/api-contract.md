@@ -237,4 +237,41 @@ Errors
 - 400 Bad Request → invalid request payload
   Notes
 
+### PATCH /incidents/{id}/status
+
+Purpose: Change the status of an incident.
+
+Request
+
+- status: Open | InProgress | Resolved | Closed
+
+Rules
+
+- Agent and Admin can change incident status
+- Reporter cannot change incident status
+- An Agent can only change the status of incidents assigned to them
+- An Admin can change the status of any incident
+- Status transitions must follow the workflow rules defined in the domain
+
+Response (200)
+
+- id
+- title
+- description
+- teamId
+- category
+- priority
+- status
+- reporterId
+- assignedToId
+- createdAt
+- updatedAt
+
+Errors
+
+- 404 Not Found → incident does not exist
+- 403 Forbidden → user does not have permission to change incident status
+- 409 Conflict → status transition is invalid
+- 400 Bad Request → invalid request payload
+
 \- Non-admin users cannot set assignedToId or teamId (request should be rejected with 403).
