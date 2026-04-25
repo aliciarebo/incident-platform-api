@@ -4,6 +4,7 @@ using IncidentPlatform.Application.Incidents.ChangeIncidentStatus;
 using IncidentPlatform.Application.Incidents.CreateIncident;
 using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
+using IncidentPlatform.Application.Incidents.GetTeamIncidents;
 using IncidentPlatform.Domain.Ports;
 using IncidentPlatform.Infrastructure.Auth;
 using IncidentPlatform.Infrastructure.Persistence;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<GetIncidentsHandler>();
 builder.Services.AddScoped<GetIncidentByIdHandler>();
 builder.Services.AddScoped<AssignIncidentHandler>();
 builder.Services.AddScoped<ChangeIncidentStatusHandler>();
+builder.Services.AddScoped<GetTeamIncidentsHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
