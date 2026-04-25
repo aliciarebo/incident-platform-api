@@ -4,6 +4,7 @@ using IncidentPlatform.Application.Incidents.ChangeIncidentStatus;
 using IncidentPlatform.Application.Incidents.CreateIncident;
 using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
+using IncidentPlatform.Application.Incidents.GetTeamIncidents;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IncidentPlatform.API.Controllers
@@ -17,14 +18,16 @@ namespace IncidentPlatform.API.Controllers
         private readonly GetIncidentByIdHandler _getByIdHandler;
         private readonly AssignIncidentHandler _assignIncidentHandler;
         private readonly ChangeIncidentStatusHandler _changeIncidentStatusHandler;
+        private readonly GetTeamIncidentsHandler _getTeamIncidentsHandler;
 
-        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler, ChangeIncidentStatusHandler changeIncidentStatusHandler)
+        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler, ChangeIncidentStatusHandler changeIncidentStatusHandler, GetTeamIncidentsHandler getTeamIncidentsHandler)
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
             _getByIdHandler = getHandlerById;
             _assignIncidentHandler = assignIncidentHandler;
             _changeIncidentStatusHandler = changeIncidentStatusHandler;
+            _getTeamIncidentsHandler = getTeamIncidentsHandler;
         }
 
         [HttpPost]
@@ -71,6 +74,16 @@ namespace IncidentPlatform.API.Controllers
             var command = new ChangeIncidentStatusCommand(id, request.Status);
 
             var result = await _changeIncidentStatusHandler.HandleAsync(command);
+
+            return Ok(result);
+        }
+
+        [HttpGet("team")]
+        public async Task<IActionResult> GetTeam([FromQuery] Guid teamId, [FromQuery] string? status, [FromQuery] bool? assigned)
+        {
+            var query = new GetTeamIncidentsQuery(teamId,status, assigned);
+
+            var result = await _getTeamIncidentsHandler.HandleAsync(query);
 
             return Ok(result);
         }
