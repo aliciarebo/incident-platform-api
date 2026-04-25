@@ -4,6 +4,7 @@ using IncidentPlatform.Application.Incidents.ChangeIncidentStatus;
 using IncidentPlatform.Application.Incidents.CreateIncident;
 using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
+using IncidentPlatform.Application.Incidents.GetMyIncidents;
 using IncidentPlatform.Application.Incidents.GetTeamIncidents;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,8 +20,9 @@ namespace IncidentPlatform.API.Controllers
         private readonly AssignIncidentHandler _assignIncidentHandler;
         private readonly ChangeIncidentStatusHandler _changeIncidentStatusHandler;
         private readonly GetTeamIncidentsHandler _getTeamIncidentsHandler;
+        private readonly GetMyIncidentsHandler _getMyIncidentsHandler;
 
-        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler, ChangeIncidentStatusHandler changeIncidentStatusHandler, GetTeamIncidentsHandler getTeamIncidentsHandler)
+        public IncidentsController(CreateIncidentHandler createHandler, GetIncidentsHandler getHandler, GetIncidentByIdHandler getHandlerById, AssignIncidentHandler assignIncidentHandler, ChangeIncidentStatusHandler changeIncidentStatusHandler, GetTeamIncidentsHandler getTeamIncidentsHandler, GetMyIncidentsHandler getMyIncidentsHandler )
         {
             _createHandler = createHandler;
             _getHandler = getHandler;
@@ -28,6 +30,7 @@ namespace IncidentPlatform.API.Controllers
             _assignIncidentHandler = assignIncidentHandler;
             _changeIncidentStatusHandler = changeIncidentStatusHandler;
             _getTeamIncidentsHandler = getTeamIncidentsHandler;
+            _getMyIncidentsHandler = getMyIncidentsHandler;
         }
 
         [HttpPost]
@@ -84,6 +87,14 @@ namespace IncidentPlatform.API.Controllers
             var query = new GetTeamIncidentsQuery(teamId,status, assigned);
 
             var result = await _getTeamIncidentsHandler.HandleAsync(query);
+
+            return Ok(result);
+        }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMy()
+        {
+            var result = await _getMyIncidentsHandler.HandleAsync(new GetMyIncidentsQuery());
 
             return Ok(result);
         }
