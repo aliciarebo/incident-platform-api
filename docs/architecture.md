@@ -1,42 +1,42 @@
-\# Architecture — Incident Platform API
+# Architecture — Incident Platform API
 
-\## Purpose
+## Purpose
 
 This service provides a team-based Incident Management API for creating, viewing, assigning and updating incidents with clear workflow rules and role-based permissions.
 
 ---
 
-\## High-level Architecture
+## High-level Architecture
 
 The solution follows Clean Architecture to keep business rules independent from frameworks and infrastructure.
 
-Layers:
+### Layers
 
-\- \*\*Domain\*\*
+- **Domain**
 
-&nbsp; - Core business entities and rules (Incident, Team, User, enums/value objects).
+- Core business entities and rules (Incident, Team, User, enums/value objects).
 
-&nbsp; - No dependencies on ASP.NET, EF Core or external services.
+- No dependencies on ASP.NET, EF Core or external services.
 
-\- \*\*Application\*\*
+- **Application**
 
-&nbsp; - Use cases / orchestration (CreateIncident, GetTeamQueue, UpdateIncident, etc.).
+- Use cases / orchestration (CreateIncident, GetTeamQueue, UpdateIncident, etc.).
 
-&nbsp; - Defines interfaces (ports) for persistence and external concerns (repositories, current user context).
+- Defines interfaces (ports) for persistence and external concerns (repositories, current user context).
 
-\- \*\*Infrastructure\*\*
+- **Infrastructure**
 
-&nbsp; - Implementations for persistence and external concerns (EF Core repositories, database, auth/JWT, etc.).
+- Implementations for persistence and external concerns (EF Core repositories, database, auth/JWT, etc.).
 
-&nbsp; - Contains EF Core DbContext and migrations.
+- Contains EF Core DbContext and migrations.
 
-\- \*\*API\*\*
+- **API**
 
-&nbsp; - ASP.NET Core Web API.
+- ASP.NET Core Web API.
 
-&nbsp; - Controllers/Endpoints map HTTP requests to Application use cases.
+- Controllers/Endpoints map HTTP requests to Application use cases.
 
-&nbsp; - Auth middleware, request validation, and response formatting.
+- Auth middleware, request validation, and response formatting.
 
 Dependency direction:
 
@@ -44,59 +44,55 @@ Domain ← Application ← Infrastructure ← API
 
 ---
 
-\## Domain Model (MVP)
+## Domain Model (MVP)
 
-\### Entities
+### Entities
 
-\- \*\*User\*\*
+- **User**
 
-&nbsp; - id, name, email
+- id, name, email
 
-&nbsp; - role: Reporter | Agent | Admin
+- role: Reporter | Agent | Admin
 
-&nbsp; - teamId (MVP: a user belongs to one team)
+- teamId (MVP: a user belongs to one team)
 
-\- \*\*Team\*\*
+- **Team**
 
-&nbsp; - id, name
+- id, name
 
-\- \*\*Incident\*\*
+- **Incident**
 
-&nbsp; - id, title, description
+- id, title, description
 
-&nbsp; - priority: Low | Medium | High
+- priority: Low | Medium | High
 
-&nbsp; - status: OPEN | IN_PROGRESS | RESOLVED | CLOSED
+- status: Open | InProgress | Resolved | Closed
 
-&nbsp; - teamId
+- teamId
 
-&nbsp; - category (optional)
+- category (optional)
 
-&nbsp; - reporterId
+- reporterId
 
-&nbsp; - assignedToId (nullable)
+- assignedToId (nullable)
 
-&nbsp; - createdAt, updatedAt
+- createdAt, updatedAt
 
 ---
 
-\## Workflow Rules (MVP)
+## Workflow Rules (MVP)
 
-\### Status transitions
+### Status transitions
 
 Allowed transitions:
 
-\- OPEN → IN_PROGRESS
+- Open → InProgress
 
-\- IN_PROGRESS → RESOLVED
+- InProgress → Resolved
 
-\- RESOLVED → CLOSED
+- Resolved → Closed
 
 Any other transition must be rejected.
-
-\### Assignment
-
-\- An incident can be unassigned initially.
 
 ### Status change rules
 
@@ -105,66 +101,6 @@ Any other transition must be rejected.
 - An Agent can only change the status of incidents assigned to them
 - An Admin can change the status of any incident
 - Status transitions must follow the workflow rules defined in the Incident aggregate
-
----
-
-\## Authorization \& Visibility (MVP)
-
-The service uses JWT authentication. The token includes: userId (sub), role, teamId.
-
-\### Visibility rules
-
-\- \*\*Agent\*\* can view incidents belonging to their team.
-
-\- \*\*Agent\*\* can view incidents assigned to them.
-
-\- \*\*Reporter\*\* can view incidents created by them (optional for MVP; can be added later).
-
-\- \*\*Admin\*\* can view all incidents.
-
-\### Update permissions (field-level)
-
-\- \*\*Non-admin users\*\* cannot set `assignedToId` or `teamId`.
-
-&nbsp; - If included in the update request, the API must reject with \*\*403 Forbidden\*\*.
-
-\- \*\*Admin\*\* can update `assignedToId` and `teamId`.
-
----
-
-\## API Design
-
-The API follows an "intent-based" design:
-
-\- A single update endpoint supports the UI "Edit \& Save" workflow:
-
-&nbsp; - `PATCH /incidents/{id}` (partial update)
-
-\- Team visibility is derived from the JWT:
-
-&nbsp; - `GET /incidents/team` does not accept teamId query (prevents cross-team access)
-
-See `docs/api-contract.md` for endpoint details.
-
----
-
-\## Persistence (planned)
-
-\- Database: PostgreSQL
-
-\- ORM: Entity Framework Core
-
-\- Migrations stored in Infrastructure
-
-\- Seed data for teams/users for local development
-
----
-
-\## Observability (planned)
-
-\- Structured logging (Serilog)
-
-\- Health endpoint (`/health`) for readiness checks
 
 ---
 
@@ -179,16 +115,67 @@ See `docs/api-contract.md` for endpoint details.
 - An already assigned incident cannot be reassigned, unless the actor is Admin and the incident is not in Resolved or Closed
 - Assigning an incident does not change the incident status
 
-\## Non-goals (MVP)
+---
+
+## Authorization \& Visibility (MVP)
+
+The service uses JWT authentication. The token includes: userId (sub), role, teamId.
+
+### Visibility rules
+
+- **Agent** can view incidents belonging to their team
+- **Agent** can view incidents assigned to them
+- **Reporter** can view incidents created by them (optional for MVP)
+- **Admin** can view all incidents
+
+### Update permissions (field-level)
+
+- **Non-admin users** cannot set `assignedToId` or `teamId`
+  - If included in the request, the API must reject with **403 Forbidden**
+
+- **Admin** can update `assignedToId` and `teamId`
+
+---
+
+## API Design
+
+- Team visibility is derived from the JWT
+  - `GET /incidents/team` does not accept `teamId` query (prevents cross-team access)
+
+See `docs/api-contract.md` for endpoint details.
+
+---
+
+## Persistence (planned)
+
+- Database: PostgreSQL
+
+- ORM: Entity Framework Core
+
+- Migrations stored in Infrastructure
+
+- Seed data for teams/users for local development
+
+---
+
+## Observability (planned)
+
+- Structured logging (Serilog)
+
+- Health endpoint (`/health`) for readiness checks
+
+---
+
+## Non-goals (MVP)
 
 Out of scope for MVP, planned for later iterations:
 
-\- Comments
+- Comments
 
-\- Attachments
+- Attachments
 
-\- Full audit history
+- Full audit history
 
-\- SLAs / escalation rules
+- SLAs / escalation rules
 
-\- Advanced reassignment workflows
+- Advanced reassignment workflows

@@ -1,24 +1,24 @@
-\# API Contract — Incident Platform
+# API Contract — Incident Platform
 
 Base URL: `/api/v1`
 
-\## Auth
+## Auth
 
-\### POST /auth/login
+### POST /auth/login
 
 Purpose: Authenticate a user and return a JWT.
 
 Request
 
-\- email: string
+- email: string
 
-\- password: string
+- password: string
 
 Response
 
-\- accessToken: string (JWT)
+- accessToken: string (JWT)
 
-\- user:
+- user:
 
 &nbsp; - id: string (guid)
 
@@ -36,165 +36,119 @@ Notes
 
 ---
 
-\## Incidents
+## Incidents
 
-\### POST /incidents
+### POST /incidents
 
 Purpose: Create a new incident.
 
 Request
 
-\- title: string
+- title: string
 
-\- description: string
+- description: string
 
-\- priority: Low | Medium | High
+- priority: Low | Medium | High
 
-\- teamId: string (guid)
+- teamId: string (guid)
 
-\- category?: string
+- category?: string
 
 Response (201)
 
-\- id: string (guid)
+- id: string (guid)
 
-\- status: OPEN
-
-\- assignedToId: string | null
-
-\- createdAt: string (ISO)
-
-\- updatedAt: string (ISO)
-
-\### GET /incidents/team
+### GET /incidents/team
 
 Purpose: Team queue (incidents for my team, including unassigned).
 
 Notes
 
-\- teamId is derived from JWT (not passed as query)
+- teamId is derived from JWT (not passed as query)
 
 Query
 
-\- status?: OPEN | IN_PROGRESS | RESOLVED | CLOSED
+- status?: Open | InProgress | Resolved | Closed
 
-\- priority?: Low | Medium | High
+- priority?: Low | Medium | High
 
-\- assigned?: true | false (optional)
+- assigned?: true | false (optional)
 
-Response (200): array
+Response (200): object
 
-\- id
+- id
 
-\- title
+- title
 
-\- priority
+- priority
 
-\- status
+- status
 
-\- teamId
+- teamId
 
-\- assignedToId (nullable)
+- assignedToId (nullable)
 
-\- createdAt
+- createdAt
 
-\- updatedAt
+- updatedAt
+
+Errors
+
+- 400 Bad Request → invalid query parameters
 
 ---
 
-\### GET /incidents/my
+### GET /incidents/my
 
 Purpose: Incidents assigned to the current user.
 
-Response (200): array
+Response (200): object
 
-\- id
+- id
 
-\- title
+- title
 
-\- teamId
+- teamId
 
-\- priority
+- priority
 
-\- status
+- status
 
-\- createdAt
+- createdAt
 
-\- updatedAt
+- updatedAt
 
 ---
 
-\### GET /incidents/{id}
+### GET /incidents/{id}
 
 Purpose: Incident detail.
 
-Response (200)
+Response (200): object
 
-\- id
+- id
 
-\- title
+- title
 
-\- description
+- description
 
-\- teamId
+- teamId
 
-\- category (nullable)
+- category (nullable)
 
-\- priority
+- priority
 
-\- status
+- status
 
-\- reporterId
+- reporterId
 
-\- assignedToId (nullable)
+- assignedToId (nullable)
 
-\- createdAt
+- createdAt
 
-\- updatedAt
+- updatedAt
 
 ---
-
-\### PATCH /incidents/{id}
-
-Purpose: Edit incident fields in a single "Save" action from the UI.
-
-\- title?
-
-\- description?
-
-\- priority?
-
-\- category?
-
-\- status?
-
-\- teamId? (Admin only)
-
-\- assignedToId?(Admin only)
-
-Response (200)
-
-\- id
-
-\- title
-
-\- description
-
-\- teamId
-
-\- priority
-
-\- status
-
-\- category
-
-\- reporterId
-
-\- assignedToId (nullable)
-
-\- createdAt
-
-\- updatedAt
 
 ### PATCH /incidents/{id}/assign
 
@@ -215,7 +169,7 @@ Rules
 - An already assigned incident cannot be reassigned, unless the actor is Admin and the incident is not in Resolved or Closed
 - Assigning an incident does not change its status
 
-Response (200)
+Response (200): object
 
 - id
 - title
@@ -235,7 +189,6 @@ Errors
 - 403 Forbidden → user does not have permission to assign the incident
 - 409 Conflict → assignment violates business rules or conflicts with current incident state
 - 400 Bad Request → invalid request payload
-  Notes
 
 ### PATCH /incidents/{id}/status
 
@@ -253,7 +206,7 @@ Rules
 - An Admin can change the status of any incident
 - Status transitions must follow the workflow rules defined in the domain
 
-Response (200)
+Response (200) : object
 
 - id
 - title
@@ -274,4 +227,9 @@ Errors
 - 409 Conflict → status transition is invalid
 - 400 Bad Request → invalid request payload
 
-\- Non-admin users cannot set assignedToId or teamId (request should be rejected with 403).
+## Conventions
+
+- All dates are in ISO 8601 format
+- Enums are serialized as strings
+- All endpoints return JSON
+- All IDs are UUID (GUID)
