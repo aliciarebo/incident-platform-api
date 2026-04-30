@@ -1,4 +1,5 @@
 using IncidentPlatform.Application.Auth;
+using IncidentPlatform.Application.Auth.Login;
 using IncidentPlatform.Application.Incidents.AssignIncident;
 using IncidentPlatform.Application.Incidents.ChangeIncidentStatus;
 using IncidentPlatform.Application.Incidents.CreateIncident;
@@ -7,6 +8,7 @@ using IncidentPlatform.Application.Incidents.GetIncidents;
 using IncidentPlatform.Application.Incidents.GetMyIncidents;
 using IncidentPlatform.Application.Incidents.GetTeamIncidents;
 using IncidentPlatform.Domain.Ports;
+using IncidentPlatform.Domain.Users;
 using IncidentPlatform.Infrastructure.Auth;
 using IncidentPlatform.Infrastructure.Persistence;
 
@@ -33,6 +35,9 @@ builder.Services.AddScoped<AssignIncidentHandler>();
 builder.Services.AddScoped<ChangeIncidentStatusHandler>();
 builder.Services.AddScoped<GetTeamIncidentsHandler>();
 builder.Services.AddScoped<GetMyIncidentsHandler>();
+builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
+builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped<LoginHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
