@@ -1,4 +1,5 @@
-﻿using IncidentPlatform.Domain.Users;
+﻿using IncidentPlatform.Application.Auth;
+using IncidentPlatform.Domain.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;

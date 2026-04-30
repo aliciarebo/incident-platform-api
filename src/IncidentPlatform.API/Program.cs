@@ -1,3 +1,4 @@
+using System.Text;
 using IncidentPlatform.Application.Auth;
 using IncidentPlatform.Application.Auth.Login;
 using IncidentPlatform.Application.Incidents.AssignIncident;
@@ -8,12 +9,37 @@ using IncidentPlatform.Application.Incidents.GetIncidents;
 using IncidentPlatform.Application.Incidents.GetMyIncidents;
 using IncidentPlatform.Application.Incidents.GetTeamIncidents;
 using IncidentPlatform.Domain.Ports;
-using IncidentPlatform.Domain.Users;
 using IncidentPlatform.Infrastructure.Auth;
 using IncidentPlatform.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+var jwtSecret = builder.Configuration["Jwt:Secret"]
+    ?? throw new InvalidOperationException("JWT secret is not configured.");
 
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "IncidentPlatform";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "IncidentPlatform";
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSecret)
+            )
+        };
+    });
+
+builder.Services.AddAuthorization();
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
  {
@@ -47,6 +73,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
