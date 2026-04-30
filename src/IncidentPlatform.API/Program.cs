@@ -1,4 +1,5 @@
 using System.Text;
+using IncidentPlatform.API.Auth;
 using IncidentPlatform.Application.Auth;
 using IncidentPlatform.Application.Auth.Login;
 using IncidentPlatform.Application.Incidents.AssignIncident;
@@ -54,7 +55,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IIncidentRepository, InMemoryIncidentRepository>();
 builder.Services.AddScoped<CreateIncidentHandler>();
-builder.Services.AddScoped<ICurrentUser, FakeCurrentUser>();
+builder.Services.AddScoped<ICurrentUser, JwtCurrentUser>();
 builder.Services.AddScoped<GetIncidentsHandler>();
 builder.Services.AddScoped<GetIncidentByIdHandler>();
 builder.Services.AddScoped<AssignIncidentHandler>();
@@ -64,6 +65,7 @@ builder.Services.AddScoped<GetMyIncidentsHandler>();
 builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
 builder.Services.AddScoped<LoginHandler>();
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
