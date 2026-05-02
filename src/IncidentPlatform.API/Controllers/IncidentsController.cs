@@ -6,6 +6,7 @@ using IncidentPlatform.Application.Incidents.GetIncidentById;
 using IncidentPlatform.Application.Incidents.GetIncidents;
 using IncidentPlatform.Application.Incidents.GetMyIncidents;
 using IncidentPlatform.Application.Incidents.GetTeamIncidents;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IncidentPlatform.API.Controllers
@@ -33,6 +34,7 @@ namespace IncidentPlatform.API.Controllers
             _getMyIncidentsHandler = getMyIncidentsHandler;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateIncidentCommand request)
         {
