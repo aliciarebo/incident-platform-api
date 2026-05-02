@@ -34,7 +34,7 @@ namespace IncidentPlatform.API.Controllers
             _getMyIncidentsHandler = getMyIncidentsHandler;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Reporter,Agent,Admin")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateIncidentCommand request)
         {
@@ -46,7 +46,8 @@ namespace IncidentPlatform.API.Controllers
                 result
             );
         }
-
+        
+        [Authorize(Roles = "Reporter,Agent,Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -54,6 +55,7 @@ namespace IncidentPlatform.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Reporter,Agent,Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -65,6 +67,7 @@ namespace IncidentPlatform.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Agent,Admin")]
         [HttpPatch("{id}/assign")]
         public async Task<IActionResult> Assign(Guid id, AssignIncidentRequest request)
         {
@@ -73,6 +76,7 @@ namespace IncidentPlatform.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Agent,Admin")]
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> ChangeStatus(Guid id, ChangeIncidentStatusRequest request)
         {
@@ -83,6 +87,7 @@ namespace IncidentPlatform.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Reporter,Agent,Admin")]
         [HttpGet("team")]
         public async Task<IActionResult> GetTeam([FromQuery] Guid teamId, [FromQuery] string? status, [FromQuery] bool? assigned)
         {
@@ -93,6 +98,7 @@ namespace IncidentPlatform.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Agent,Admin")]
         [HttpGet("my")]
         public async Task<IActionResult> GetMy()
         {

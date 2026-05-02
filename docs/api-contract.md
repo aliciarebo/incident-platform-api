@@ -58,6 +58,39 @@ Response (201)
 
 - id: string (guid)
 
+---
+
+### GET /incidents
+
+Purpose: Retrieve all incidents in the system.
+Response(200): array
+
+- id: string (guid)
+
+- title: string
+
+- description: string
+
+- teamId: string (guid)
+
+- priority: Low | Medium | High
+
+- status: Open | InProgress | Resolved | Closed
+
+- reporterId: string (guid)
+
+- assignedToId: string (guid, nullable)
+
+- createdAt: string (ISO 8601)
+
+- updatedAt: string (ISO 8601)
+
+Errors
+
+- 403 Forbidden → user does not have permission to view incidents
+
+---
+
 ### GET /incidents/team
 
 Purpose: Team queue (incidents for my team, including unassigned).
@@ -189,6 +222,8 @@ Errors
 - 403 Forbidden → user does not have permission to assign the incident
 - 409 Conflict → assignment violates business rules or conflicts with current incident state
 - 400 Bad Request → invalid request payload
+
+---
 
 ### PATCH /incidents/{id}/status
 
