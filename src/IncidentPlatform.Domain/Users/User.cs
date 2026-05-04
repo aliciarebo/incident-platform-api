@@ -11,19 +11,22 @@ namespace IncidentPlatform.Domain.Users
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
+        public string PasswordHash { get; private set; }
         public UserRole Role { get; private set; }
         public Guid TeamId { get; private set; }
 
-        public User(Guid id, string name, string email, UserRole role, Guid teamId)
+        public User(Guid id, string name, string email, string passwordHash, UserRole role, Guid teamId)
         {
             if (id == Guid.Empty) throw new ArgumentException("Id is required", nameof(id));
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name is required", nameof(name));
+            if (string.IsNullOrWhiteSpace(passwordHash)) throw new ArgumentException("PasswordHash is required", nameof(passwordHash));
             if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Email is required", nameof(email));
             if (teamId == Guid.Empty) throw new ArgumentException("TeamId is required", nameof(teamId));
 
             Id = id;
             Name = name;
             Email = email;
+            PasswordHash = passwordHash;
             Role = role;
             TeamId = teamId;
         }

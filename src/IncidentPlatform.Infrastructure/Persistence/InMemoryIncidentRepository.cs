@@ -24,18 +24,12 @@ namespace IncidentPlatform.Infrastructure.Persistence
             return Task.FromResult(incident);
         }
 
-        public Task<IEnumerable<Incident>> GetAllAsync()
+        public Task<IEnumerable<Incident>> GetAllAsync(CancellationToken ct = default)
         {
             return Task.FromResult(_incidents.AsEnumerable());
         }
 
-        public Task<Incident?> GetByIdAsync(Guid id)
-        {
-            var incident = _incidents.FirstOrDefault(i => i.Id == id);
-            return Task.FromResult(incident);
-        }
-
-        public Task UpdateAsync(Incident incident)
+        public Task UpdateAsync(Incident incident, CancellationToken ct = default)
         {
             return Task.CompletedTask;
         }

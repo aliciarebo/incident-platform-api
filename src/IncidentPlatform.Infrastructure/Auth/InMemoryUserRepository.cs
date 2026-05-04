@@ -1,4 +1,5 @@
-﻿using IncidentPlatform.Application.Auth;
+﻿
+using IncidentPlatform.Domain.Ports;
 using IncidentPlatform.Domain.Users;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace IncidentPlatform.Infrastructure.Auth
                 Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 "Agent User",
                 "agent@incidentplatform.dev",
+                BCrypt.Net.BCrypt.HashPassword("Test1234!"),
                 UserRole.Agent,
                 Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6")
             ),
@@ -23,6 +25,7 @@ namespace IncidentPlatform.Infrastructure.Auth
                 Guid.Parse("22222222-2222-2222-2222-222222222222"),
                 "Admin User",
                 "admin@incidentplatform.dev",
+                BCrypt.Net.BCrypt.HashPassword("Test1234!"),
                 UserRole.Admin,
                 Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6")
             ),
@@ -30,6 +33,7 @@ namespace IncidentPlatform.Infrastructure.Auth
                 Guid.Parse("33333333-3333-3333-3333-333333333333"),
                 "Reporter User",
                 "reporter@incidentplatform.dev",
+                BCrypt.Net.BCrypt.HashPassword("Test1234!"),
                 UserRole.Reporter,
                 Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6")
             )

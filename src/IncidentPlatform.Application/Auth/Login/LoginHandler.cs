@@ -1,4 +1,4 @@
-﻿using IncidentPlatform.Domain.Users;
+﻿using IncidentPlatform.Domain.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +11,16 @@ namespace IncidentPlatform.Application.Auth.Login
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly IPasswordHasher _passwordHasher;
 
         public LoginHandler(
         IUserRepository userRepository,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<LoginResult> HandleAsync(LoginCommand command)
@@ -27,7 +30,9 @@ namespace IncidentPlatform.Application.Auth.Login
             if (user is null)
                 throw new UnauthorizedAccessException("Invalid credentials");
 
-            // MVP: sin password real todavía
+            if (user is null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
+                throw new UnauthorizedAccessException("Invalid credentials");
+
             var token = _tokenService.GenerateToken(user);
 
             return new LoginResult(
