@@ -91,6 +91,7 @@ builder.Services.AddScoped<GetMyIncidentsHandler>();
 builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
 builder.Services.AddScoped<LoginHandler>();
+builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 

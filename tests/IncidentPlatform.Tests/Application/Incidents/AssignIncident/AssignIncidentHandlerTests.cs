@@ -24,11 +24,11 @@ namespace IncidentPlatform.Tests.Application.Incidents.AssignIncident
 
             var repositoryMock = new Mock<IIncidentRepository>();
             repositoryMock
-                .Setup(r => r.GetByIdAsync(incident.Id))
+                .Setup(r => r.GetByIdAsync(incident.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(incident);
 
             repositoryMock
-                .Setup(r => r.UpdateAsync(incident))
+                .Setup(r => r.UpdateAsync(incident, It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             var currentUserMock = new Mock<ICurrentUser>();
@@ -43,7 +43,7 @@ namespace IncidentPlatform.Tests.Application.Incidents.AssignIncident
 
             result.AssignedToId.Should().Be(currentUserId);
             incident.AssignedToId.Should().Be(currentUserId);
-            repositoryMock.Verify(r => r.UpdateAsync(incident), Times.Once);
+            repositoryMock.Verify(r => r.UpdateAsync(incident, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace IncidentPlatform.Tests.Application.Incidents.AssignIncident
 
             var repositoryMock = new Mock<IIncidentRepository>();
             repositoryMock
-                .Setup(r => r.GetByIdAsync(incident.Id))
+                .Setup(r => r.GetByIdAsync(incident.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(incident);
 
             var currentUserMock = new Mock<ICurrentUser>();
@@ -78,7 +78,7 @@ namespace IncidentPlatform.Tests.Application.Incidents.AssignIncident
 
             var repositoryMock = new Mock<IIncidentRepository>();
             repositoryMock
-                .Setup(r => r.GetByIdAsync(incident.Id))
+                .Setup(r => r.GetByIdAsync(incident.Id, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(incident);
 
             var currentUserMock = new Mock<ICurrentUser>();

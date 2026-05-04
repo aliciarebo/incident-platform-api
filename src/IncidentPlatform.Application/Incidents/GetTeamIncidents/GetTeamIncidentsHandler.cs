@@ -12,14 +12,11 @@ namespace IncidentPlatform.Application.Incidents.GetTeamIncidents
     public class GetTeamIncidentsHandler
     {
         private readonly IIncidentRepository _repository;
-        private readonly ICurrentUser _currentUser;
 
         public GetTeamIncidentsHandler(
-            IIncidentRepository repository,
-            ICurrentUser currentUser)
+            IIncidentRepository repository)
         {
             _repository = repository;
-            _currentUser = currentUser;
         }
 
         public async Task<IEnumerable<GetTeamIncidentsResult>> HandleAsync(GetTeamIncidentsQuery query)
